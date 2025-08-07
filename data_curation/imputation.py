@@ -19,6 +19,6 @@ feat_flag= ['Appendix_Diameter']
 dataset_test= Dharma_Imputer(feat_continuous=feat_inlammatory, feat_categorical=feat_others, feat_flag=feat_flag)
 
 imputed_data = dataset_test.fit_transform(df[feat_all])
-imputed_data.to_excel('dataset_imputed.xlsx', index=False)
+imputed_data.to_excel('dataset_imputed2.xlsx', index=False)
 
 print(imputed_data.isna().sum())
