@@ -10,7 +10,7 @@ def set_random_state(params, default_state=17):
     return params
 
 class Models_Diagnosis:
-    def __init__(self, model=None, rf_params=None, xgb_params=None, lgbm_params=None):
+    def __init__(self, rf_params=None, xgb_params=None, lgbm_params=None):
         self.models = {
             'Dharma': RandomForestClassifier(
                 **set_random_state(rf_params if rf_params else {

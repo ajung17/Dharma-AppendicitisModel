@@ -27,7 +27,5 @@ def Pipeline_Diagnosis(strategy=None, model_name='Dharma',feat_flag=None):
         ('model', model)
     ])
 
-    logging.info(f"The list of features used in model : {dharma_pipeline.named_steps['imputer'].base_features}")
-
     return dharma_pipeline
 

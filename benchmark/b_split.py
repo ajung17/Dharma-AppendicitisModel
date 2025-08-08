@@ -10,12 +10,7 @@ from Pipeline.pipeline import Pipeline_Diagnosis
 from utils.helper import split_data
 from sklearn.metrics import make_scorer, recall_score, precision_score
 
-
-
-strategy = ['dt','knn','linear','simple']
-
-
-cv= StratifiedKFold(n_splits=10, shuffle=True, random_state=88)
+random_states= [1,11,22,33,44,55,66,77,88,99,111]
 
 specificity = make_scorer(recall_score, pos_label=0)
 npv = make_scorer(precision_score, pos_label=0)
@@ -30,17 +25,19 @@ scoring = {
     
 }
 
-results = []
-
+results=[]
 df=pd.read_excel('../data_curation/dataset_model.xlsx')
 
-train_df, _ , _ = split_data(df)
-x= train_df.drop(columns=['Diagnosis'])
-y= train_df['Diagnosis']
-feat_flag = ['Appendix_Diameter']
 
-for strat in strategy:
-    pipeline = Pipeline_Diagnosis(strategy=strat, feat_flag=feat_flag)
+for r_state in random_states:
+    cv= StratifiedKFold(n_splits=10, shuffle=True, random_state=88)
+    train_df, _ , _ = split_data(df,random_state=r_state)
+    x= train_df.drop(columns=['Diagnosis'])
+    y= train_df['Diagnosis']
+    feat_flag = ['Appendix_Diameter']
+
+
+    pipeline = Pipeline_Diagnosis(feat_flag=feat_flag)
     result = cross_validate(pipeline, x, y, scoring=scoring, cv=cv, error_score='raise', return_train_score=False)
 
     mean_scores = {metric: result[f'test_{metric}'].mean() for metric in scoring.keys()}
@@ -48,10 +45,16 @@ for strat in strategy:
 
 
     results.append({
-        'strategy': strat,
+        'random_state': r_state,
         **mean_scores,
         **std_scores
     })
 
 results_df = pd.DataFrame(results)
-results_df.to_excel('b_imputation.xlsx', index=False)
+results_df.to_excel('b_split.xlsx', index=False)
+
+
+
+
+
+
