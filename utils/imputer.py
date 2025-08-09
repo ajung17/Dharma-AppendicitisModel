@@ -6,10 +6,6 @@ from sklearn.impute import IterativeImputer, KNNImputer
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.impute import SimpleImputer 
-
-
-import pandas as pd
-import numpy as np
 import logging
 
 logging.basicConfig(
