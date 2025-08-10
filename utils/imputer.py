@@ -1,5 +1,4 @@
 
-
 from sklearn.experimental import enable_iterative_imputer 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.impute import IterativeImputer, KNNImputer
@@ -84,7 +83,7 @@ class Dharma_Imputer(BaseEstimator, TransformerMixin):
                 self.dtc[col] = model
                 # logging.info(f"Fitted classifier for: {col} with features: {x_train.columns.tolist()}")
             
-            logging.info("Fitting Dharma_Imputer completed.")
+            # logging.info("Fitting Dharma_Imputer completed.")
         
         else:
             for col in self.feat_categorical:
@@ -116,7 +115,7 @@ class Dharma_Imputer(BaseEstimator, TransformerMixin):
                 if imputer is not None:
                     x_copy[[col]] = imputer.transform(x_copy[[col]])
 
-        logging.info("Transforming data with Dharma_Imputer completed.")
+        # logging.info("Transforming data with Dharma_Imputer completed.")
         
         x_copy = x_copy[self.base_features] if self.base_features is not None else x_copy
 

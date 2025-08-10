@@ -2,9 +2,9 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.model_selection import cross_validate, StratifiedKFold
 from sklearn.base import clone
-from scipy import stats
 import pandas as pd
 import logging
+from scipy import stats
 
 logging.basicConfig(
     level=logging.INFO,  
@@ -78,6 +78,36 @@ def eval_summary(df, metrics):
         })
     
     return pd.DataFrame(summary)
+
+def model_compare(df1,df2, metrics):
+    summary = []
+
+    for metric in metrics:
+        scores1 = df1[f'{metric}']
+        scores2 = df2[f'{metric}']
+        diff = scores1 - scores2
+        
+        ci_lower = np.percentile(diff, 2.5)
+        ci_upper = np.percentile(diff, 97.5)
+
+        _, p_ttest = stats.ttest_rel(scores1, scores2)
+
+        summary.append({
+            "metric": metric,
+            "mean_diff": np.mean(diff),
+            "std_diff": np.std(diff, ddof=1),  
+            "ci_lower": ci_lower,
+            "ci_upper": ci_upper,
+            "p_ttest": p_ttest
+        })
+
+    return pd.DataFrame(summary)
+
+    
+
+    
+
+
 
 
 
