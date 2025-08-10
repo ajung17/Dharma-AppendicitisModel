@@ -80,4 +80,4 @@ for strat in strategy:
     })
 
 results_df = pd.DataFrame(results)
-results_df.to_excel('b_imputation.xlsx', index=False)
+results_df.to_excel('eval_imputation.xlsx', index=False)
