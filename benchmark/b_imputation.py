@@ -12,11 +12,7 @@ from utils.helper import split_data
 from sklearn.metrics import make_scorer, recall_score, precision_score
 from scipy import stats
 
-
-
-
 strategy = ['dt','knn','linear','simple']
-
 
 cv= StratifiedKFold(n_splits=10, shuffle=True, random_state=88)
 
@@ -74,8 +70,6 @@ for strat in strategy:
     else:
         t_stat, p_val = stats.ttest_rel(baseline_scores, roc_auc_scores)
         p_values['roc_auc_p'] = p_val
-
-
 
     results.append({
         'strategy': strat,

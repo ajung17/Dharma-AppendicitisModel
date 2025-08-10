@@ -3,8 +3,13 @@ import numpy as np
 from sklearn.model_selection import cross_validate, StratifiedKFold
 from sklearn.base import clone
 from scipy import stats
+import pandas as pd
+import logging
 
-
+logging.basicConfig(
+    level=logging.INFO,  
+    format="%(asctime)s — %(levelname)s — %(message)s"
+)
 
 def split_data(df, random_state=None):
     if random_state is None:
@@ -21,6 +26,7 @@ def bootstrap( x_train, y_train, model=None, scoring=None,n_bootstraps = 10):
     results=[]
 
     for i in range(n_bootstraps):
+        logging.info(F'STARTING ON SAMPLE_NO : {i+1} ')
         boot_indices = rng.choice(len(y_train), size=len(y_train), replace=True)
         x_boot = x_train.iloc[boot_indices,:]
         y_boot = y_train.iloc[boot_indices]
@@ -28,7 +34,6 @@ def bootstrap( x_train, y_train, model=None, scoring=None,n_bootstraps = 10):
         mean_scores = {}
         
         model0=clone(model)
-
 
         result = cross_validate(
         model0,
@@ -48,11 +53,35 @@ def bootstrap( x_train, y_train, model=None, scoring=None,n_bootstraps = 10):
             **mean_scores,
         })
 
-    return results
+        logging.info(f'BOOTSTRAPPING ON SAMPLE {i+1} ENDED')
+
+    df=pd.DataFrame(results)
+
+    return df
 
 
-def confidence_interval(results):
-    summary={}
+def eval_summary(df, metrics):
+    summary = []
+    
+    for metric in metrics:
+        scores = df[f'{metric}']
+        
+        ci_lower = np.percentile(scores, 2.5)
+        ci_upper = np.percentile(scores, 97.5)
+
+        summary.append({
+            "metric": metric,
+            "mean": np.mean(scores),
+            "std": np.std(scores, ddof=1),  
+            "ci_lower": ci_lower,
+            "ci_upper": ci_upper
+        })
+    
+    return pd.DataFrame(summary)
+
+
+
+
     
     
 

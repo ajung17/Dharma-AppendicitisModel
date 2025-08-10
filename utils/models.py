@@ -22,10 +22,30 @@ class Models_Diagnosis:
                 }),
             ),
             'XGBoost': xgb.XGBClassifier(
-                **set_random_state(xgb_params if xgb_params else {}),
+                **set_random_state(xgb_params if xgb_params else {
+                    'n_estimators': 555,
+                    'max_depth': 3,
+                    'min_child_weight': 6,
+                    'learning_rate': 0.01,
+                    'gamma': 0,
+                    'subsample': 0.6,
+                    'colsample_bytree': 0.6,
+                    'reg_alpha': 0.1,
+                    'reg_lambda': 1
+                }),
             ),
             'LightGBM': lgb.LGBMClassifier(
-                **set_random_state(lgbm_params if lgbm_params else {}),
+                **set_random_state(lgbm_params if lgbm_params else {
+                    'n_estimators': 333,
+                    'max_depth': 3,
+                    'min_child_samples': 3,
+                    'learning_rate': 0.01,
+                    'min_gain_to_split': 0,         
+                    'bagging_fraction': 0.6,    
+                    'feature_fraction': 0.6,   
+                    'lambda_l1': 0,                
+                    'lambda_l2': 1
+                }),
             )
         }
         

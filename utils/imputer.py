@@ -25,7 +25,7 @@ class Dharma_Imputer(BaseEstimator, TransformerMixin):
         self.feat_model = feat_model if feat_model is not None else ['Nausea','Loss_of_Appetite','Peritonitis','WBC_Count','Neutrophil_Percentage','CRP','Ketones_in_Urine','Appendix_Diameter','Free_Fluids']
         self.dtc={}
         
-        logging.info("Initializing Dharma_Imputer with strategy: %s, columns: %s", strategy, self.feat_continuous + self.feat_categorical)
+        # logging.info("Initializing Dharma_Imputer with strategy: %s, columns: %s", strategy, self.feat_continuous + self.feat_categorical)
 
         if self.strategy is None or self.strategy == 'dt':
             self.imputer_continuous = IterativeImputer(
@@ -48,7 +48,7 @@ class Dharma_Imputer(BaseEstimator, TransformerMixin):
             self.imputer_continuous = SimpleImputer(strategy='mean')
         else:
             raise ValueError("Invalid strategy for continuous imputation. Use DecisionTreeRegressor: 'dt', LinearRegression: 'linear', KNNImputer: 'knn'.")
-        logging.info("Imputer initialized with strategy: %s", self.strategy)
+        # logging.info("Imputer initialized with strategy: %s", self.strategy)
 
         self.imputer_categorical = DecisionTreeClassifier(max_depth=7, random_state=17) 
 
@@ -82,7 +82,7 @@ class Dharma_Imputer(BaseEstimator, TransformerMixin):
                 model = DecisionTreeClassifier(max_depth=7, random_state=17)
                 model.fit(x_train, y_train)
                 self.dtc[col] = model
-                logging.info(f"Fitted classifier for: {col} with features: {x_train.columns.tolist()}")
+                # logging.info(f"Fitted classifier for: {col} with features: {x_train.columns.tolist()}")
             
             logging.info("Fitting Dharma_Imputer completed.")
         
@@ -108,7 +108,7 @@ class Dharma_Imputer(BaseEstimator, TransformerMixin):
                 if model is not None and missing_mask.any():
                     to_predict = x_copy.loc[missing_mask].drop(columns=[col])
                     x_copy.loc[missing_mask, col] = model.predict(to_predict)
-                    logging.info(f"Transformed column: {col} with features: {to_predict.columns.tolist()}.")
+                    # logging.info(f"Transformed column: {col} with features: {to_predict.columns.tolist()}.")
         else:
             for col in self.feat_categorical:
                 imputer = self.dtc.get(col, None)
@@ -120,5 +120,5 @@ class Dharma_Imputer(BaseEstimator, TransformerMixin):
         
         x_copy = x_copy[self.base_features] if self.base_features is not None else x_copy
 
-        logging.info(f"features list feeded to the model: {self.base_features}")
+        logging.info(f"features list fed to the model: {self.base_features}")
         return x_copy
