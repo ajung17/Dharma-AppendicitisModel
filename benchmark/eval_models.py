@@ -7,28 +7,32 @@ if project_root not in sys.path:
 import pandas as pd
 from utils.helper import eval_summary, model_compare
 
-df_dharma=pd.read_excel('b_test1_dharma.xlsx')
-df_xgb = pd.read_excel('b_test1_xgboost.xlsx')
-df_lgbm = pd.read_excel('b_test1_lgbm.xlsx')
+# df_dharma=pd.read_excel('test1_Dharma.xlsx')
+# df_xgb = pd.read_excel('test1_xgboost.xlsx')
+# df_lgbm = pd.read_excel('test1_lgbm.xlsx')
+
+df_dharma=pd.read_excel('test2_Dharma.xlsx')
+df_xgb = pd.read_excel('test2_xgboost.xlsx')
+df_lgbm = pd.read_excel('test2_lgbm.xlsx')
 
 metrics = [
-    'roc_auc',
-    'accuracy',
-    'specificity',
-    'npv',
-    'sensitivity',
-    'ppv'   
+    'AUC_ROC',
+    'Accuracy',
+    'Sensitivity',
+    'Specificity',
+    'PPV',
+    'NPV'   
 ]
 
 dataframes = [('dharma', df_dharma), ('xgb', df_xgb), ('lgbm', df_lgbm)]
 
 for name, df in dataframes:
     result = eval_summary(df, metrics)
-    result.to_excel(f'eval_{name}.xlsx', index=False)
+    result.to_excel(f'metrics2_{name}.xlsx', index=False)
 
     if name != 'dharma':
         result_diff= model_compare(df_dharma,df, metrics)
-        result_diff.to_excel(f'benchmark_{name}.xlsx', index=False)
+        result_diff.to_excel(f'benchmark2_{name}.xlsx', index=False)
 
 
 

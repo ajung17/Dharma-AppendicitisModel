@@ -17,12 +17,12 @@ y= train_df['Diagnosis']
 
 cv= StratifiedKFold(n_splits=10, shuffle=True, random_state=88)
 
-params_grid_1 = {
-    "n_estimators": [111, 333, 555],
-    "max_depth": [3, 7, 10],
-    "min_child_weight": [3, 6, 9],
-    "learning_rate": [0.01, 0.1, 0.3]
-}
+# params_grid_1 = {
+#     "n_estimators": [111, 333, 555],
+#     "max_depth": [3, 7, 10],
+#     "min_child_weight": [3, 6, 9],
+#     "learning_rate": [0.01, 0.1, 0.3]
+# }
 
 params_grid_2 = {
     "n_estimators": [555],
