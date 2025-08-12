@@ -4,7 +4,7 @@ from sklearn.base import clone
 import pandas as pd
 import logging
 from scipy import stats
-from sklearn.metrics import make_scorer, recall_score, precision_score, roc_auc_score, accuracy_score
+from sklearn.metrics import  recall_score, precision_score, roc_auc_score, accuracy_score
 
 
 logging.basicConfig(

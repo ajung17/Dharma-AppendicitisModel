@@ -9,14 +9,14 @@ import pandas as pd
 import numpy as np
 
 df=pd.read_excel('dataset_tools.xlsx',sheet_name=0)
-print(df.shape)
-print(df.isna().sum())
+# print(df.shape)
+# print(df.isna().sum())
 
-drop_col = ['Diagnosis','Severity']
-df= df.drop(columns=drop_col)
+drop_col = ['Diagnosis','Severity','Alvarado_Score','Paedriatic_Appendicitis_Score']
+df1= df.drop(columns=drop_col)
 
 
-feat_all = list(df.columns)
+feat_all = list(df1.columns)
 feat_inlammatory= ['Body_Temperature', 'WBC_Count', 'Neutrophil_Percentage', 'CRP']
 feat_others= ['Coughing_Pain','Nausea','Migratory_Pain','Lower_Right_Abd_Pain','Peritonitis','Ipsilateral_Rebound_Tenderness',
                'Loss_of_Appetite', 'Ketones_in_Urine', 'Free_Fluids']
@@ -24,10 +24,13 @@ feat_flag= ['Appendix_Diameter']
 
 dataset_test= Dharma_Imputer(feat_continuous=feat_inlammatory, feat_categorical=feat_others, feat_model=feat_all, feat_flag=feat_flag)
 
-imputed_data = dataset_test.fit_transform(df[feat_all])
-print(imputed_data.shape)
-print(imputed_data.isna().sum())
+imputed_data = dataset_test.fit_transform(df1[feat_all])
+# print(imputed_data.shape)
+# print(imputed_data.isna().sum())
 
 imputed_data = imputed_data.replace(-1, np.nan)
+# print(imputed_data.index.equals(df.index))
+
+imputed_data = pd.concat([imputed_data,df['Diagnosis']], axis= 1)
 imputed_data.to_excel('dataset_tools_imputed.xlsx', index=False)
 
