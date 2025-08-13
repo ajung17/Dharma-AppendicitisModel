@@ -4,7 +4,7 @@ from sklearn.base import clone
 import pandas as pd
 import logging
 from scipy import stats
-from sklearn.metrics import  recall_score, precision_score, roc_auc_score, accuracy_score
+from sklearn.metrics import  recall_score, precision_score, roc_auc_score, accuracy_score,roc_curve, confusion_matrix
 
 
 logging.basicConfig(
@@ -111,8 +111,9 @@ def model_compare(df1,df2, metrics):
 
     return pd.DataFrame(summary)
 
-def bootstrap_test( x_test, y_test, model=None, n_bootstraps = 5555):   
+def bootstrap_test( x_test, y_test, model=None, threshold = None,n_bootstraps = 5555):   
     rng = np.random.RandomState(17)
+    threshold = 0.5 if threshold is None else threshold
 
     results=[]
 
@@ -122,8 +123,9 @@ def bootstrap_test( x_test, y_test, model=None, n_bootstraps = 5555):
         x_boot = x_test.iloc[boot_indices,:]
         y_boot = y_test.iloc[boot_indices]
 
-        y_pred = model.predict(x_boot)
+        # y_pred = model.predict(x_boot)
         y_pred_proba = model.predict_proba(x_boot)[:, 1]
+        y_pred = (y_pred_proba>= threshold).astype(int)
 
         auroc_score = roc_auc_score(y_boot, y_pred_proba)
         ppv_score = precision_score(y_boot, y_pred, pos_label=1)
@@ -147,6 +149,85 @@ def bootstrap_test( x_test, y_test, model=None, n_bootstraps = 5555):
     df=pd.DataFrame(results)
 
     return df
+
+
+def threshold_tune(y_true,y_prob):
+    fpr, tpr, thresholds = roc_curve(y_true, y_prob)
+    
+    youden_j = tpr - fpr
+    euclidean_distance = np.sqrt((fpr - 0)**2 + (tpr - 1)**2)
+
+    best_youden_idx = np.argmax(youden_j)
+    best_euclidean_idx = np.argmin(euclidean_distance)
+
+    return {
+        'thresholds': thresholds,
+        'youden_j': youden_j,
+        'euclidean_distance': euclidean_distance,
+        'best_youden': (thresholds[best_youden_idx], youden_j[best_youden_idx]),
+        'best_euclidean': (thresholds[best_euclidean_idx], euclidean_distance[best_euclidean_idx])
+    }
+
+def optimize_sensi(y_true, y_prob, min_specificity=0.60):
+    thresholds = np.linspace(0, 1, 1001)  # fine-grained search
+    best_threshold = None
+    best_sensitivity = -1
+    best_specificity = None
+
+    for t in thresholds:
+        y_pred = (y_prob >= t).astype(int)
+        tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+
+        sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0
+        specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
+
+        if specificity >= min_specificity and sensitivity > best_sensitivity:
+            best_threshold = t
+            best_sensitivity = sensitivity
+            best_specificity = specificity
+
+    return {
+        'threshold': best_threshold,
+        'sensitivity': best_sensitivity,
+        'specificity': best_specificity
+    }
+
+def tune_threshold(y_true, y_prob, mode='sensitivity', min_other=0.90):
+    thresholds = np.linspace(0, 1, 1001)
+    best_threshold = None
+    best_metric = -1
+    best_sens = None
+    best_spec = None
+
+    for t in thresholds:
+        y_pred = (y_prob >= t).astype(int)
+        tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+
+        sens = tp / (tp + fn) if (tp + fn) > 0 else 0
+        spec = tn / (tn + fp) if (tn + fp) > 0 else 0
+
+        if mode == 'sensitivity':
+            if spec >= min_other and sens > best_metric:
+                best_metric = sens
+                best_threshold = t
+                best_sens = sens
+                best_spec = spec
+        elif mode == 'specificity':
+            if sens >= min_other and spec > best_metric:
+                best_metric = spec
+                best_threshold = t
+                best_sens = sens
+                best_spec = spec
+        else:
+            raise ValueError("mode must be 'sensitivity' or 'specificity'")
+
+    return {
+        'threshold': best_threshold,
+        'sensitivity': best_sens,
+        'specificity': best_spec
+    }
+
+
 
     
 
