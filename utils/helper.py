@@ -20,7 +20,7 @@ def split_data(df, random_state=None):
     return train_df, val_df, test_df
 
 
-def bootstrap( x_train, y_train, model=None, scoring=None,n_bootstraps = 10):   
+def bootstrap( x_train, y_train, model=None, scoring=None,n_bootstraps = 555):   
     rng = np.random.RandomState(17)
     cv= StratifiedKFold(n_splits=10, shuffle=True, random_state=88)
 

@@ -29,13 +29,13 @@ def Pipeline_Diagnosis(strategy=None, model_name='Dharma',feat_flag=None):
 
     return dharma_pipeline
 
-def Pipeline_Complications(strategy=None, model_name = 'Dharma', feat_flag = None):
+def Pipeline_Complications(strategy=None, model_name = 'Dharma', feat_flag = None, feat_model= None):
 
     models_comp = Models_Complications()
     model = models_comp.get_model(model_name)
 
     dharma_pipeline = Pipeline(steps=[
-        ('imputer', Dharma_Imputer(strategy=strategy, feat_flag=feat_flag)),
+        ('imputer', Dharma_Imputer(strategy=strategy, feat_flag=feat_flag, feat_model=feat_model)),
         ('model', model)
     ])
 
