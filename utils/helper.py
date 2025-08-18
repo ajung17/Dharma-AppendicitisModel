@@ -228,6 +228,39 @@ def tune_threshold(y_true, y_prob, mode='sensitivity', min_other=0.90):
     }
 
 
+def performance_metrics_ci(y_prob, y_true, threshold=0.44, alpha=0.05):
+    y_pred = (y_prob >= threshold).astype(int)
+    cm = confusion_matrix(y_true, y_pred)
+    tn, fp, fn, tp = cm.ravel()
+
+    def clopper_pearson(k, n, alpha=0.05):
+        lower = 0.0 if k == 0 else stats.beta.ppf(alpha/2, k, n-k+1)
+        upper = 1.0 if k == n else stats.beta.ppf(1-alpha/2, k+1, n-k)
+        return lower, upper
+
+    sens = tp / (tp + fn) if (tp + fn) > 0 else None
+    sens_ci = clopper_pearson(tp, tp + fn) if (tp + fn) > 0 else (None, None)
+
+    spec = tn / (tn + fp) if (tn + fp) > 0 else None
+    spec_ci = clopper_pearson(tn, tn + fp) if (tn + fp) > 0 else (None, None)
+
+    ppv = tp / (tp + fp) if (tp + fp) > 0 else None
+    ppv_ci = clopper_pearson(tp, tp + fp) if (tp + fp) > 0 else (None, None)
+
+    npv = tn / (tn + fn) if (tn + fn) > 0 else None
+    npv_ci = clopper_pearson(tn, tn + fn) if (tn + fn) > 0 else (None, None)
+
+    return {
+        "Sensitivity": sens,
+        "Sensitivity_CI": sens_ci,
+        "Specificity": spec,
+        "Specificity_CI": spec_ci,
+        "PPV": ppv,
+        "PPV_CI": ppv_ci,
+        "NPV": npv,
+        "NPV_CI": npv_ci
+    }
+
 
     
 
