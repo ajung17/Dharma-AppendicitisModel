@@ -50,7 +50,7 @@ train_nm = shuffle(train_nm, random_state=17).reset_index(drop=True)
 
 
 
-train_nm.to_excel('data_train_imputed.xlsx', index=False)
+# train_nm.to_excel('data_train_imputed.xlsx', index=False)
 
 
 

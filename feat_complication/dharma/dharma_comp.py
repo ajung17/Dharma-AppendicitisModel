@@ -19,7 +19,13 @@ df_base = pd.read_excel('../../data_curation/dataset_complications.xlsx')
 feat_model = ['Nausea','Loss_of_Appetite','Peritonitis','Body_Temperature','WBC_Count','Neutrophil_Percentage','CRP','Ketones_in_Urine','Appendix_Diameter','Free_Fluids','Severity']
 df_model = df_base[feat_model]
 
-_,val, test = split_data(df_model)
+train,val, test = split_data(df_model)
+
+# print(val['Severity'].value_counts())
+# print(test['Severity'].value_counts())
+# print(train['Severity'].value_counts())
+
+
 
 df_train = pd.read_excel('../data_train_imputed.xlsx')
 

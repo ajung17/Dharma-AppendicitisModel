@@ -33,6 +33,8 @@ df=pd.read_excel('../data_curation/dataset_model.xlsx')
 
 train_df, _ , _ = split_data(df)
 
+
+
 x= train_df.drop(columns=['Diagnosis'])
 y= train_df['Diagnosis']
 
